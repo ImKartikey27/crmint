@@ -1,4 +1,4 @@
-import { createCustomer } from "../controllers/customer.controllers";
+import { createCustomer } from "../controllers/customer.controllers.js";
 import { Router } from "express";
 
 const router = Router();
