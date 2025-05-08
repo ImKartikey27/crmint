@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "CRM portal to manage customer and orders",
   "main": "index.js",
+  "type":"module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,5 +19,8 @@
     "OAuth"
   ],
   "author": "Kartikey",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
