@@ -2,6 +2,7 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 import {ApiError} from "../utils/apiError.js"
 import {ApiResponse} from "../utils/apiResponse.js"
 import { CustomerSchema} from "../validators/validators.js"
+import publishToStream from "../utils/RedisPublisher.js"
 
 const createCustomer = asyncHandler(async(req, res) => {
 
@@ -13,6 +14,8 @@ const createCustomer = asyncHandler(async(req, res) => {
     }
 
     // sendToRedis(value)
+    // Publish the customer data to the Redis stream
+    await publishToStream('customers', value)
 
 
     // For now, just return the customer data as a response
