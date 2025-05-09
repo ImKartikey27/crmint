@@ -1,10 +1,29 @@
 import { client } from "../utils/RedisClient.js";
-import { Customer } from "../models/Customer.js";
+import Customer from "../models/customer.models.js";
 
 const STREAM_KEY = 'customers';
+
+const validateCustomerData = (fields) => {
+    const requiredFields = ['name', 'email', 'phone', 'address'];
+    const missingFields = requiredFields.filter(field => !fields[field]);
+    
+    if (missingFields.length > 0) {
+        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+    }
+    return true;
+};
+
+const parseMessageData = (messageData) => {
+    const data = {};
+    // Convert flat array to object
+    for (let i = 0; i < messageData.length; i += 2) {
+        data[messageData[i]] = messageData[i + 1];
+    }
+    return data;
+};
+
 const startCustomerStream = async () => {
     try {
-
         let lastId = '0';
 
         while (true) {
@@ -23,24 +42,44 @@ const startCustomerStream = async () => {
                 if (!response) continue;
 
                 for (const stream of response) {
-                    for (const message of stream.messages) {
-                        const [id, fields] = message;
+                    const messages = stream.messages;
+                    
+                    for (const message of messages) {
+                        const id = message.id;
+                        // Parse the message data into proper object format
+                        const fields = parseMessageData(Object.values(message.message));
 
-                        //cast the fields to an object
-                        const data = Object.fromEntries(fields); 
-                        
-                        // Save to MongoDB
-                        const customer = new Customer(data);
-                        await customer.save();
-                        console.log(`Processed and saved customer with ID: ${customer._id}`);
+                        try {
+                            // Validate customer data before saving
+                            
+                            validateCustomerData(fields);
 
-                        // Update last processed ID
+                            // Save to MongoDB
+                            const customer = new Customer(fields);
+                            await customer.save();
+
+                            await client.XDEL(STREAM_KEY, id);
+
+                            console.log(`Processed and saved customer with ID: ${customer._id}`);
+                        } catch (validationError) {
+                            await client.XDEL(STREAM_KEY, id);
+                            console.error('Customer validation failed:', {
+                                messageId: id,
+                                error: validationError.message,
+                                data: fields
+                            });
+                        }
+
                         lastId = id;
                     }
                 }
             } catch (err) {
                 console.error('Error processing message:', err);
-                // Continue processing even if one message fails
+                console.error('Error details:', {
+                    name: err.name,
+                    message: err.message,
+                    stack: err.stack
+                });
                 continue;
             }
         }
