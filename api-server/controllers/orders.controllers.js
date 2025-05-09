@@ -2,6 +2,7 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 import {ApiError} from "../utils/apiError.js"
 import {ApiResponse} from "../utils/apiResponse.js"
 import { OrderSchema} from "../validators/validators.js"
+import publishToStream from "../utils/RedisPublisher.js"
 
 const createOrder = asyncHandler(async(req, res) => {
 
@@ -12,6 +13,8 @@ const createOrder = asyncHandler(async(req, res) => {
         throw new ApiError(400, error.details[0].message)
     }
     // sendToRedis(value)
+    // Publish the order data to the Redis stream
+     await publishToStream('orders', value)
 
 
     // For now, just return the order data as a response
