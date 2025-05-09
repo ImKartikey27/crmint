@@ -12,9 +12,13 @@ const createOrder = asyncHandler(async(req, res) => {
     if(error){
         throw new ApiError(400, error.details[0].message)
     }
-    // sendToRedis(value)
+    
+    //convert the order data to String
+    value.price = String(value.price)
+    value.quantity = String(value.quantity)
+
     // Publish the order data to the Redis stream
-     await publishToStream('orders', value)
+    await publishToStream('orders', value)
 
 
     // For now, just return the order data as a response
