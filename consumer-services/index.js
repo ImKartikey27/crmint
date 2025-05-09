@@ -2,7 +2,7 @@
 // 2. Connect to Redis
 // 3. Connect to MongoDB
 // 4. Start order and customer streams
-import {connectRedis} from "./utils/RedisClient";
+import {connectRedis} from "./utils/RedisClient.js";
 import connectDB from "./db/index.js";
 import dotenv from "dotenv";
 import { startOrderStream } from "./consumers/orderHandler.js";
@@ -15,8 +15,9 @@ const start = async () => {
         await connectDB();
         await connectRedis();
 
-        startOrderStream();
+        
         startCustomerStream();
+        startOrderStream();
         console.log("Consumer services started successfully");
         
 
