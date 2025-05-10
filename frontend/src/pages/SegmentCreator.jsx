@@ -1,17 +1,18 @@
 "use client"
 
-import { useState } from "react"
-import RuleBuilder from "../components/RuleBuilder"
-import LoadingSpinner from "../components/LoadingSpinner"
 import ErrorMessage from "../components/ErrorMessage"
 import SuccessMessage from "../components/SuccessMessage"
 import { segmentApi } from "../api"
+import { useState } from "react"
+import RuleBuilder from "../components/RuleBuilder"
+import LoadingSpinner from "../components/LoadingSpinner"
 
 function SegmentCreator({ onSave }) {
   const [segmentName, setSegmentName] = useState("")
   const [rules, setRules] = useState([
-    { id: 1, type: "condition", field: "spend", operator: ">", value: "", connector: "AND" },
+    { field: "spend", operator: ">", value: "" }
   ])
+  const [condition, setCondition] = useState("AND") // New state for overall condition
   const [audienceSize, setAudienceSize] = useState(null)
 
   // API state
@@ -19,9 +20,6 @@ function SegmentCreator({ onSave }) {
   const [isSaveLoading, setIsSaveLoading] = useState(false)
   const [error, setError] = useState(null)
   const [successMessage, setSuccessMessage] = useState("")
-
-  // Abort controller for cancelling API requests
-  const abortControllerRef = useState(new AbortController())[0]
 
   const handlePreview = async () => {
     if (!segmentName.trim()) {
@@ -38,25 +36,35 @@ function SegmentCreator({ onSave }) {
     setError(null)
 
     try {
-      // Cancel any in-flight requests
-      abortControllerRef.abort()
-      const newController = new AbortController()
-      abortControllerRef.signal = newController.signal
-
-      // Call the API
-      const response = await segmentApi.previewSegment(rules)
+      const response = await segmentApi.previewSegment({
+        rules,
+        condition // Send both rules and condition
+      })
       setAudienceSize(response.audienceSize)
-      setSuccessMessage("Audience size calculated successfully")
-
-      // Clear success message after 3 seconds
-      setTimeout(() => {
-        setSuccessMessage("")
-      }, 3000)
     } catch (err) {
       setError(err)
-      setAudienceSize(null)
     } finally {
       setIsPreviewLoading(false)
+    }
+  }
+
+  const handleSave = async () => {
+    try {
+      setIsSaveLoading(true)
+      await segmentApi.saveCampaign({
+        name: segmentName,
+        rules: {
+          conditionType: condition,
+          conditions: rules
+        },
+        audienceSize
+      })
+      setSuccessMessage("Campaign saved successfully!")
+      if (onSave) onSave()
+    } catch (err) {
+      setError(err)
+    } finally {
+      setIsSaveLoading(false)
     }
   }
 
@@ -69,91 +77,40 @@ function SegmentCreator({ onSave }) {
     })
   }
 
-  const handleSave = async () => {
-    if (!segmentName.trim()) {
-      setError(new Error("Please enter a segment name"))
-      return
-    }
-
-    if (!isValidRules()) {
-      setError(new Error("Please complete all rule conditions"))
-      return
-    }
-
-    if (audienceSize === null) {
-      setError(new Error("Please preview the audience size first"))
-      return
-    }
-
-    setIsSaveLoading(true)
-    setError(null)
-
-    try {
-      const campaign = {
-        name: segmentName,
-        rules,
-        audienceSize,
-      }
-
-      // Call the API
-      const savedCampaign = await segmentApi.saveCampaign(campaign)
-
-      // Add created date from server response or use current date
-      savedCampaign.createdAt = savedCampaign.createdAt || new Date()
-
-      // Call the onSave callback with the saved campaign
-      onSave(savedCampaign)
-
-      setSuccessMessage("Campaign saved successfully")
-    } catch (err) {
-      setError(err)
-    } finally {
-      setIsSaveLoading(false)
-    }
-  }
-
-  const handleRetry = () => {
-    setError(null)
-    if (audienceSize === null) {
-      handlePreview()
-    }
-  }
-
-  const handleDismissSuccess = () => {
-    setSuccessMessage("")
-  }
-
   return (
-    <div className="bg-white shadow rounded-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Create Audience Segment</h2>
-
-      <ErrorMessage error={error} onRetry={handleRetry} />
-      <SuccessMessage message={successMessage} onDismiss={handleDismissSuccess} />
-
-      <div className="mb-6">
-        <label htmlFor="segmentName" className="block text-sm font-medium text-gray-700 mb-1">
-          Segment Name
-        </label>
+    <div className="space-y-6 max-w-3xl mx-auto p-6">
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Segment Name</label>
         <input
           type="text"
-          id="segmentName"
           value={segmentName}
           onChange={(e) => setSegmentName(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500"
-          placeholder="Enter segment name"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         />
       </div>
 
-      <div className="mb-6">
-        <h3 className="text-lg font-medium text-gray-700 mb-3">Audience Rules</h3>
-        <RuleBuilder rules={rules} setRules={setRules} />
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Match Type</label>
+        <select
+          value={condition}
+          onChange={(e) => setCondition(e.target.value)}
+          className="mt-1 block w-48 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+        >
+          <option value="AND">Match ALL conditions</option>
+          <option value="OR">Match ANY condition</option>
+        </select>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+      <RuleBuilder rules={rules} setRules={setRules} />
+
+      {error && <ErrorMessage message={error.message} />}
+      {successMessage && <SuccessMessage message={successMessage} />}
+
+      <div className="flex space-x-4">
         <button
           onClick={handlePreview}
           disabled={isPreviewLoading}
-          className="w-full sm:w-auto px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 flex items-center justify-center"
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           {isPreviewLoading ? (
             <>
@@ -166,29 +123,30 @@ function SegmentCreator({ onSave }) {
         </button>
 
         {audienceSize !== null && (
-          <div className="text-center sm:text-right">
-            <span className="text-sm text-gray-500">Estimated audience size:</span>
-            <span className="ml-2 text-lg font-bold text-gray-800">{audienceSize.toLocaleString()}</span>
-          </div>
+          <button
+            onClick={handleSave}
+            disabled={isSaveLoading}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          >
+            {isSaveLoading ? (
+              <>
+                <LoadingSpinner size="small" className="mr-2" />
+                Saving...
+              </>
+            ) : (
+              "Save Segment"
+            )}
+          </button>
         )}
       </div>
 
-      <div className="flex justify-end">
-        <button
-          onClick={handleSave}
-          disabled={!segmentName || audienceSize === null || isSaveLoading}
-          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 flex items-center justify-center"
-        >
-          {isSaveLoading ? (
-            <>
-              <LoadingSpinner size="small" className="mr-2" />
-              Saving...
-            </>
-          ) : (
-            "Save Segment"
-          )}
-        </button>
-      </div>
+      {audienceSize !== null && (
+        <div className="mt-4 p-4 bg-gray-50 rounded-md">
+          <p className="text-sm text-gray-600">
+            Estimated audience size: <span className="font-medium">{audienceSize}</span> customers
+          </p>
+        </div>
+      )}
     </div>
   )
 }

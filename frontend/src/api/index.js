@@ -1,5 +1,5 @@
 // Base API configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"
 
 // Helper function for API requests
 async function apiRequest(endpoint, options = {}) {
@@ -34,7 +34,8 @@ async function apiRequest(endpoint, options = {}) {
 
     // Parse JSON response
     const data = await response.json()
-    return data
+    // Extract data from ApiResponse structure
+    return data.data || data
   } catch (error) {
     console.error("API request failed:", error)
     throw error
@@ -44,31 +45,41 @@ async function apiRequest(endpoint, options = {}) {
 // API endpoints
 export const segmentApi = {
   // Preview audience size based on segment rules
-  previewSegment: (rules) => {
-    return apiRequest("/api/preview-segment", {
+  previewSegment: (data) => {
+    return apiRequest("/api/v1/campaigns/preview", {
       method: "POST",
-      body: JSON.stringify({ rules }),
+      body: JSON.stringify({
+        rules: data.rules,
+        condition: data.condition
+      }),
     })
   },
 
   // Save a new campaign with segment rules
   saveCampaign: (campaign) => {
-    return apiRequest("/api/save-campaign", {
+    return apiRequest("/api/v1/campaigns", {
       method: "POST",
-      body: JSON.stringify(campaign),
+      body: JSON.stringify({
+        name: campaign.name,
+        rules: {
+          conditionType: campaign.rules.conditionType,
+          conditions: campaign.rules.conditions
+        },
+        audienceSize: campaign.audienceSize
+      }),
     })
   },
 
   // Get all campaigns
   getCampaigns: () => {
-    return apiRequest("/api/campaigns", {
+    return apiRequest("/api/v1/campaigns", {
       method: "GET",
     })
   },
 
   // Get a single campaign by ID
   getCampaign: (id) => {
-    return apiRequest(`/api/campaigns/${id}`, {
+    return apiRequest(`/api/v1/campaigns/${id}`, {
       method: "GET",
     })
   },
