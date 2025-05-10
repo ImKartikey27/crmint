@@ -21,6 +21,10 @@ const customerSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true
+    },
+    lastActiveAt: {
+        type: Date,
+        default: Date.now
     }
 },{timestamps: true})
 
