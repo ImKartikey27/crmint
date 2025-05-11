@@ -1,19 +1,64 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { AuthProvider, useAuth } from "./context/AuthContext"
 import SegmentCreator from "./pages/SegmentCreator"
 import CampaignHistory from "./pages/CampaignHistory"
+import Login from "./components/Login"
 import { segmentApi } from "./api"
 import ErrorMessage from "./components/ErrorMessage"
+import LoadingSpinner from "./components/LoadingSpinner"
 
 function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/dashboard/*"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
+  )
+}
+
+// Protected Route Component
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
+
+  return children
+}
+
+// Protected Layout Component
+function DashboardLayout() {
+  const { user, logout } = useAuth()
   const [currentPage, setCurrentPage] = useState("segment-creator")
   const [campaigns, setCampaigns] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    // Fetch campaigns when the app loads
     fetchCampaigns()
   }, [])
 
@@ -42,6 +87,14 @@ function App() {
 
   const handleRetry = () => {
     fetchCampaigns()
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    )
   }
 
   return (
@@ -75,6 +128,15 @@ function App() {
                   Campaign History
                 </button>
               </div>
+            </div>
+            <div className="flex items-center">
+              <span className="mr-4 text-sm text-gray-700">{user?.email}</span>
+              <button
+                onClick={logout}
+                className="text-sm text-gray-700 hover:text-gray-900"
+              >
+                Logout
+              </button>
             </div>
           </div>
         </div>
