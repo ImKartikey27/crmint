@@ -4,6 +4,7 @@ import Order from "../../consumer-services/models/order.models.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
+import sendEmail from "../services/email.services.js";
 
 
 const previewSegment = asyncHandler(async (req, res) => {
@@ -73,31 +74,102 @@ const previewSegment = asyncHandler(async (req, res) => {
 
 const saveCampaign = asyncHandler(async (req, res)=> {
 
-    const { name, rules, audienceSize } = req.body;
+    const { name, rules} = req.body;
 
-    if (!name || !rules || !audienceSize) {
+    if (!name || !rules) {
         throw new ApiError(400, "Please provide all required fields");
     }
 
     const campaign = new Campaign({
         name,
-        rules,
-        audienceSize
+        rules
     });
 
     await campaign.save();
 
-    return new ApiResponse(res, 201, {
-        message: "Campaign saved successfully",
-        campaign
-    });
+    //filter customer logic 
+    const customers = await Customer.find()
+    let sent = 0 
+    let failed = 0
+    let audienceSize = 0
+
+    for (const customer of customers) {
+      let totalSpend = await Order.aggregate([
+        { $match: { customerId: customer._id } },
+     {
+        $project: {
+          customerId: 1, // Keep customerId for grouping
+          totalAmount: { $multiply: ["$quantity", "$price"] }
+        }
+      },
+      {
+        $group: {
+          _id: "$customerId",
+          total: { $sum: "$totalAmount" }
+        }
+      }
+    ]);
+      
+
+    totalSpend = totalSpend[0]?.total || 0
+
+    let visitCount = await Order.countDocuments({ customerId: customer._id })
+
+      
+
+    // Build condition checker for the rules
+    const ruleGroup = rules[0]
+    const conditionsMet = ruleGroup.conditions.map(rule => {
+
+      if (rule.field === "spend") {
+
+        return eval(`${totalSpend} ${rule.operator} ${rule.value}`);
+      } else if (rule.field === "visits") {
+          
+        return eval(`${visitCount} ${rule.operator} ${rule.value}`);
+      } else if (rule.field === "inactive_days") {
+          
+        const lastActive = new Date(customer.lastActiveAt);
+        const daysInactive = (Date.now() - lastActive.getTime()) / (1000 * 60 * 60 * 24);
+        return eval(`${daysInactive} ${rule.operator} ${rule.value}`);
+      }
+      return false;
+    })
+
+    const include = rules[0].conditionType === "AND"
+      ? conditionsMet.every(Boolean)
+      : conditionsMet.some(Boolean);
+
+    if (include) {
+        //send email 
+        const result = await sendEmail(customer.email, customer.name)
+        if (result.sent) {
+            sent += 1
+        } else {
+            failed += 1
+        }
+        audienceSize += 1
+      }
+  }
+  
+  campaign.stats.sent = sent;
+  campaign.stats.failed = failed;
+  campaign.audienceSize = audienceSize
+  await campaign.save()
+  return res.status(201).json(
+    new ApiResponse(201, "Campaign created successfully", {
+      campaign
+    })
+  );
 })
 
 const getCampaigns = asyncHandler(async (req, res) => {
     const campaigns = await Campaign.find();
-    return new ApiResponse(res, 200, {
-        campaigns
-    });
+    return res.status(200).json(
+        new ApiResponse(200, "Campaigns fetched successfully", {
+            campaigns
+        })
+    );
 })
 
 const getCampaignById = asyncHandler(async (req, res) => {
@@ -106,9 +178,11 @@ const getCampaignById = asyncHandler(async (req, res) => {
     if (!campaign) {
         throw new ApiError(404, "Campaign not found");
     }
-    return new ApiResponse(res, 200, {
-        campaign
-    });
+    return res.status(200).json(
+        new ApiResponse(200, "Campaign fetched successfully", {
+            campaign
+        })
+    );
 })
 
 export {
