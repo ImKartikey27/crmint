@@ -4,7 +4,7 @@ import connectDB from '../consumer-services/db/index.js';
 
 dotenv.config();
 
-const PORT = process.env.PORT 
+const PORT = 8000
 
 
 
