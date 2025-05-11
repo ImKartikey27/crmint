@@ -5,6 +5,7 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import sendEmail from "../services/email.services.js";
+import getInsights from "../services/ai.services.js";
 
 
 const previewSegment = asyncHandler(async (req, res) => {
@@ -185,9 +186,23 @@ const getCampaignById = asyncHandler(async (req, res) => {
     );
 })
 
+const getCampaignInsights = asyncHandler(async (req, res) => {
+  const {id} = req.params
+  const response = await getInsights(id)
+  if(!response){
+    throw new ApiError(404, "Campaign not found")
+  }
+  return res.status(200).json(
+    new ApiResponse(200, "Campaign insights fetched successfully", {
+      insights: response
+    })
+  )
+})
+
 export {
     previewSegment,
     saveCampaign,
     getCampaigns,
-    getCampaignById
+    getCampaignById,
+    getCampaignInsights
 }

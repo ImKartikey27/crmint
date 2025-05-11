@@ -2,7 +2,8 @@ import {
     previewSegment,
     saveCampaign,
     getCampaigns,
-    getCampaignById
+    getCampaignById,
+    getCampaignInsights
  } from "../controllers/campaign.controllers.js";
 import { Router } from "express";
 
@@ -12,5 +13,6 @@ router.route("/preview-segment").post(previewSegment);
 router.route("/save-campaign").post(saveCampaign);
 router.route("/campaigns").get(getCampaigns);
 router.route("/campaigns/:id").get(getCampaignById);
+router.route("/insights/:id").get(getCampaignInsights);
 
 export default router;
