@@ -3,7 +3,7 @@ import {
     saveCampaign,
     getCampaigns,
     getCampaignById
- } from "../controllers/campaign.controllers";
+ } from "../controllers/campaign.controllers.js";
 import { Router } from "express";
 
 const router = Router();

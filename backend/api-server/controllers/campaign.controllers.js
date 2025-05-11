@@ -12,18 +12,28 @@ const previewSegment = asyncHandler(async (req, res) => {
     const filteredCustomers = [];
 
     for (const customer of customers) {
-
       let totalSpend = await Order.aggregate([
-        { $match: { customerId: customer._id } }, 
-
-        { $project: { totalAmount: { $multiply: ["$quantity", "$price"] } } },
-
-        { $group: { _id: "$customerId", total: { $sum: "$totalAmount" } } } 
-      ]);
+        { $match: { customerId: customer._id } },
+     {
+        $project: {
+          customerId: 1, // Keep customerId for grouping
+          totalAmount: { $multiply: ["$quantity", "$price"] }
+        }
+      },
+      {
+        $group: {
+          _id: "$customerId",
+          total: { $sum: "$totalAmount" }
+        }
+      }
+    ]);
+      
 
       totalSpend = totalSpend[0]?.total || 0;  // Default to 0 if no orders exist
 
       let visitCount = await Order.countDocuments({ customerId: customer._id });
+
+      
 
       // Build condition checker for the rules
       const conditionsMet = rules.map(rule => {
@@ -42,15 +52,22 @@ const previewSegment = asyncHandler(async (req, res) => {
       const include = condition === "AND"
         ? conditionsMet.every(Boolean)
         : conditionsMet.some(Boolean);
+        
 
       if (include) {
         filteredCustomers.push(customer); // Include this customer if conditions met
       }
     }
+    
+      return res.status(200).json(
+    new ApiResponse(200, {
+      audienceSize: filteredCustomers.length,
+      customers: filteredCustomers
+    }, "Segment preview generated successfully")
+  );
 
-    return new ApiResponse(res, 200, {
-      audienceSize: filteredCustomers.length
-    });
+
+
     
 })
 

@@ -16,6 +16,7 @@ const campaignSchema = new mongoose.Schema({
       }
     ],
     required: true
+    
   },
   createdAt: { type: Date, default: Date.now },
   audienceSize: { type: Number, default: 0 },
