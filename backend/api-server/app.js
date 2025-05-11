@@ -4,6 +4,7 @@ import session from "express-session"
 import passport from 'passport'
 import "./services/passport.services.js"
 import dotenv from 'dotenv'
+import cors from 'cors'
 dotenv.config()
 
 
@@ -28,6 +29,12 @@ app.use(session({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(cors({
+    origin: "http://localhost:5173",
+    //origin: process.env.CLIENT_URL,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}))
 
 
 //import routes
