@@ -6,30 +6,50 @@ import LoadingSpinner from "../components/LoadingSpinner"
 import ErrorMessage from "../components/ErrorMessage"
 
 function CampaignHistory({ campaigns: initialCampaigns = [] }) {
-  const [campaigns, setCampaigns] = useState(initialCampaigns)
+  const [campaigns, setCampaigns] = useState(initialCampaigns || [])
+  const [insights, setInsights] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     // If we have campaigns passed as props, use those
-    if (initialCampaigns.length > 0) {
-      setCampaigns(initialCampaigns)
-      return
-    }
+    // if (initialCampaigns.length > 0) {
+    //   setCampaigns(initialCampaigns)
+    //   return
+    // }
 
     // Otherwise, fetch campaigns from the API
     fetchCampaigns()
-  }, [initialCampaigns])
+  }, [])
 
   const fetchCampaigns = async () => {
     setIsLoading(true)
     setError(null)
 
     try {
-      const data = await segmentApi.getCampaigns()
-      setCampaigns(data)
+      const res = await segmentApi.getCampaigns()
+      setCampaigns(res.message.campaigns)
     } catch (err) {
       setError(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const getCampaignInsights = async (id) => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const res = await segmentApi.getInsights(id)
+      const cleaned = await res.message.insights
+        .replace(/brbr/g, '\n\n')   // double line breaks for readability
+        .replace(/br/g, '\n')       // handle any remaining 'br'
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')  // bold text with **
+        .replace(/\*(.+?)\*(?!\*)/g, '<strong>$1</strong>'); // bold text with single *
+      setInsights(cleaned)
+    } catch (error) {
+      setError(error)
     } finally {
       setIsLoading(false)
     }
@@ -59,6 +79,7 @@ function CampaignHistory({ campaigns: initialCampaigns = [] }) {
       </div>
     )
   }
+
 
   return (
     <div className="bg-white shadow rounded-lg p-6">
@@ -108,8 +129,8 @@ function CampaignHistory({ campaigns: initialCampaigns = [] }) {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {campaigns.map((campaign) => (
-                <tr key={campaign.id}>
+              {Array.isArray(campaigns) && campaigns.map((campaign) => (
+                <tr key={campaign.name} className="hover:bg-gray-100 transition duration-200">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{campaign.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {formatDate(campaign.createdAt)}
@@ -120,8 +141,14 @@ function CampaignHistory({ campaigns: initialCampaigns = [] }) {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {(campaign.sent || 0).toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm flex gap-4 items-center text-gray-500">
                     {(campaign.failed || 0).toLocaleString()}
+                    <button
+                      className="bg-green-500 text-white hover:bg-green-600 hover:cursor-pointer px-3 py-1 rounded-lg shadow-sm transition duration-200"
+                      onClick={() => { getCampaignInsights(campaign._id) }}
+                    >
+                      Get Insights
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -129,6 +156,10 @@ function CampaignHistory({ campaigns: initialCampaigns = [] }) {
           </table>
         </div>
       )}
+      <div
+        className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner text-sm text-gray-700 whitespace-pre-wrap"
+        dangerouslySetInnerHTML={{ __html: insights || '' }}
+      />
     </div>
   )
 }
