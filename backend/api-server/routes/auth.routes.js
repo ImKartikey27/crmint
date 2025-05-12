@@ -16,17 +16,17 @@ router.route("/google").get(passport.authenticate("google",{
 }))
 
 router.route("/google/callback").get(passport.authenticate("google",{
-    failureRedirect:"http://localhost:5173/login",
+    failureRedirect:"https://crmint-sigma.vercel.app/login",
 }),
     (req, res) => {
         // Successful authentication, redirect home.
-        res.redirect("http://localhost:5173/dashboard");
+        res.redirect("https://crmint-sigma.vercel.app/dashboard");
     }
 )
 
 router.route("/logout").get((req, res, next) => {
     req.logout();
-    res.redirect("http://localhost:5173/login")
+    res.redirect("https://crmint-sigma.vercel.app/login")
 })
 
 // Check auth route

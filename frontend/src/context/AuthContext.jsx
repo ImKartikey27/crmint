@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/auth/check", {
+      const response = await fetch("https://panicky-lora-kartikeysangal-connect-d32e97b6.koyeb.app/api/auth/check", {
         credentials: "include" // Important for cookies
       })
       if (response.ok) {
@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      await fetch("http://localhost:8000/api/auth/logout", {
+      await fetch("https://panicky-lora-kartikeysangal-connect-d32e97b6.koyeb.app/api/auth/logout", {
         credentials: "include"
       })
       setUser(null)
