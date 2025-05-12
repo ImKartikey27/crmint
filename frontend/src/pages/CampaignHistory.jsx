@@ -139,10 +139,10 @@ function CampaignHistory({ campaigns: initialCampaigns = [] }) {
                     {campaign.audienceSize.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {(campaign.sent || 0).toLocaleString()}
+                    {(campaign.stats.sent || 0).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm flex gap-4 items-center text-gray-500">
-                    {(campaign.failed || 0).toLocaleString()}
+                    {(campaign.stats.failed || 0).toLocaleString()}
                     <button
                       className="bg-green-500 text-white hover:bg-green-600 hover:cursor-pointer px-3 py-1 rounded-lg shadow-sm transition duration-200"
                       onClick={() => { getCampaignInsights(campaign._id) }}
