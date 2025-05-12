@@ -5,6 +5,7 @@ import passport from 'passport'
 import "./services/passport.services.js"
 import dotenv from 'dotenv'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 dotenv.config()
 
 
@@ -18,18 +19,21 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
 
 app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        httpOnly: true,
-        sameSite: 'none', // Set to 'none' for cross-origin cookies
-        secure: false, // Set to true if using HTTPS
-        maxAge: 1000 * 60 * 60 * 24 // 1 day
-    }
-}))
+  name: 'sessionId',
+  secret: process.env.SESSION_SECRET || 'your-session-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: true,        
+    sameSite: 'None',    
+    maxAge: 24 * 60 * 60 * 1000 // 1 day
+  }
+}));
+
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(cookieParser())
 app.use(cors({
     origin: "https://crmint-sigma.vercel.app",
     //origin: process.env.CLIENT_URL,
