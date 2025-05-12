@@ -1,9 +1,9 @@
 import  Campaign  from "../../consumer-services/models/campaign.models.js";
 import Customer from "../../consumer-services/models/customer.models.js"
 import Order from "../../consumer-services/models/order.models.js";
-import { ApiResponse } from "../utils/apiResponse.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/apiError.js";
+import { ApiError } from "../utils/ApiError.js";
 import sendEmail from "../services/email.services.js";
 import getInsights from "../services/ai.services.js";
 
