@@ -119,8 +119,9 @@ const saveCampaign = asyncHandler(async (req, res)=> {
       
 
     // Build condition checker for the rules
-    const ruleGroup = rules[0]
-    const conditionsMet = ruleGroup.conditions.map(rule => {
+    console.log(rules);
+    
+    const conditionsMet = rules.conditions.map(rule => {
 
       if (rule.field === "spend") {
 
@@ -137,7 +138,7 @@ const saveCampaign = asyncHandler(async (req, res)=> {
       return false;
     })
 
-    const include = rules[0].conditionType === "AND"
+    const include = rules.conditionType === "AND"
       ? conditionsMet.every(Boolean)
       : conditionsMet.some(Boolean);
 
