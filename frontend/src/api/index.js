@@ -1,6 +1,6 @@
 
 // Base API configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://panicky-lora-kartikeysangal-connect-d32e97b6.koyeb.app"
 
 // Helper function for API requests
 async function apiRequest(endpoint, options = {}) {
