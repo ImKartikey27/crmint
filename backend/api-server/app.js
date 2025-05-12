@@ -19,7 +19,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
 
 app.use(session({
-  name: 'sessionId',
+  //name: 'connect.sid',
   secret: process.env.SESSION_SECRET || 'your-session-secret',
   resave: false,
   saveUninitialized: false,
