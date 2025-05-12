@@ -270,9 +270,17 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Kartikey Sangal - [@ImKartikey27](https://x.com/KartikeySa5866)
 
-![GitHub Logo](./Public/github-logo.png) [crmint](https://github.com/ImKartikey27/crmint.git)
+<a href="https://github.com/ImKartikey27/crmint.git">
+  <img src="./Public/github-logo.png" alt="GitHub Logo" width="20" style="vertical-align:middle;"/>
+  crmint
+</a>
 
-![LinkedIn Logo](./Public/linkedin.png) [YourUsername](https://www.linkedin.com/in/kartikey-sangal-752567301/)
+<br/>
+
+<a href="https://www.linkedin.com/in/kartikey-sangal-752567301/">
+  <img src="./Public/linkedin.png" alt="LinkedIn Logo" width="20" style="vertical-align:middle;"/>
+  YourUsername
+</a>
 
 
 
