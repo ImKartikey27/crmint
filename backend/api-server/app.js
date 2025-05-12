@@ -23,6 +23,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
+        sameSite: 'none', // Set to 'none' for cross-origin cookies
         secure: false, // Set to true if using HTTPS
         maxAge: 1000 * 60 * 60 * 24 // 1 day
     }
@@ -34,6 +35,7 @@ app.use(cors({
     //origin: process.env.CLIENT_URL,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ["Content-Type", "Authorization"]
 }))
 
 

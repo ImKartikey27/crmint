@@ -3,35 +3,47 @@ import passport from 'passport';
 
 const router = express.Router();
 
-const checkAuth = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.status(401).json({ message: "Unauthorized" });
-}
+router.route("/google").get(passport.authenticate("google", {
+    scope: ["profile", "email"],
+    session: true
+}));
 
-router.route("/google").get(passport.authenticate("google",{
-    scope: ["profile", "email"]
-}))
-
-router.route("/google/callback").get(passport.authenticate("google",{
-    failureRedirect:"https://crmint-sigma.vercel.app/dashboard",
-}),
+router.route("/google/callback").get(
+    passport.authenticate("google", {
+        failureRedirect: "https://crmint-sigma.vercel.app/login",
+        session: true
+    }),
     (req, res) => {
-        // Successful authentication, redirect home.
-        res.redirect("https://crmint-sigma.vercel.app/login");
+        // Ensure session is saved before redirect
+        req.session.save((err) => {
+            if (err) {
+                console.error('Session save error:', err);
+                return res.redirect("https://crmint-sigma.vercel.app/login");
+            }
+            res.redirect("https://crmint-sigma.vercel.app/dashboard");
+        });
     }
-)
+);
 
-router.route("/logout").get((req, res, next) => {
-    req.logout();
-    res.redirect("https://crmint-sigma.vercel.app/login")
-})
-
-// Check auth route
-router.route("/check").get(checkAuth, (req, res) => {
-    res.status(200).json({ message: "Authenticated", user: req.user });
+router.route("/logout").get((req, res) => {
+    req.logout((err) => {
+        if (err) {
+            console.error('Logout error:', err);
+            return res.status(500).json({ message: "Error logging out" });
+        }
+        res.redirect("https://crmint-sigma.vercel.app/login");
+    });
 });
 
+router.route("/check").get((req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+    res.status(200).json({ 
+        message: "Authenticated", 
+        user: req.user,
+        sessionID: req.sessionID
+    });
+});
 
-export default router
+export default router;
