@@ -1,8 +1,6 @@
 <p align="center">
   <img src="./Public/main_logo.png" alt="CRMint Logo" width="150"/>
 </p>
-
-<h1 align="center">CRMint 🚀</h1>
 <p align="center">AI-Powered CRM for Campaigns & Customer Insights</p>
 
 ### 
