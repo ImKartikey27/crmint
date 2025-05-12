@@ -3,14 +3,14 @@
 function Login() {
   const handleGoogleLogin = () => {
     // Redirect to backend Google auth route
-    window.location.href = "http://localhost:8000/api/auth/google"
+    window.location.href = "https://panicky-lora-kartikeysangal-connect-d32e97b6.koyeb.app/api/auth/google"
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="w-full justify-center flex flex-col items-center">
-          <img src="../public/crmint logo.png" className="h-58" alt="" />
+          <img src="../../public/crmint.png" className="h-58" alt="" />
           <p className="mt-2 text-center text-sm text-gray-600">
             Sign in to access your dashboard
           </p>
