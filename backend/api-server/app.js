@@ -37,6 +37,13 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ["Content-Type", "Authorization"]
 }))
+// Debug middleware
+app.use((req, res, next) => {
+    console.log('Session:', req.session);
+    console.log('User:', req.user);
+    console.log('Authenticated:', req.isAuthenticated());
+    next();
+});
 
 
 //import routes
