@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./Public/logo.png" alt="CRMint Logo" width="150"/>
+  <img src="./Public/main.png" alt="CRMint Logo" width="150"/>
 </p>
 
 <h1 align="center">CRMint 🚀</h1>
