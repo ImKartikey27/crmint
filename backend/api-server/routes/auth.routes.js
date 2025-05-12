@@ -1,6 +1,5 @@
 import express from 'express';
 import passport from 'passport';
-import { isAuthenticated } from '../middlewares/Auth.middlewares.js';
 
 const router = express.Router();
 
@@ -16,11 +15,11 @@ router.route("/google").get(passport.authenticate("google",{
 }))
 
 router.route("/google/callback").get(passport.authenticate("google",{
-    failureRedirect:"https://crmint-sigma.vercel.app/login",
+    failureRedirect:"https://crmint-sigma.vercel.app/dashboard",
 }),
     (req, res) => {
         // Successful authentication, redirect home.
-        res.redirect("https://crmint-sigma.vercel.app/dashboard");
+        res.redirect("https://crmint-sigma.vercel.app/login");
     }
 )
 
