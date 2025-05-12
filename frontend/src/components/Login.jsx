@@ -3,7 +3,7 @@
 function Login() {
   const handleGoogleLogin = () => {
     // Redirect to backend Google auth route
-    window.location.href = "https://panicky-lora-kartikeysangal-connect-d32e97b6.koyeb.app/api/auth/google"
+    window.location.href = "https://crmint-sigma.vercel.app/auth/google/callback"
   }
 
   return (
