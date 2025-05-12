@@ -9,7 +9,8 @@ passport.use(new GoogleStrategy(
   {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:8000/api/auth/google/callback",
+    callbackURL: process.env.NODE_ENV === "production" ? "https://panicky-lora-kartikeysangal-connect-d32e97b6.koyeb.app/api/auth/google/callback" :
+    "http://localhost:8000/api/auth/google/callback",
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
