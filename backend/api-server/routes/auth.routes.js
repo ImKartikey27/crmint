@@ -20,6 +20,8 @@ router.route("/google/callback").get(
                 console.error('Session save error:', err);
                 return res.redirect("https://crmint-sigma.vercel.app/login");
             }
+            console.log("User authenticated:", req.user);
+            
             res.redirect("https://crmint-sigma.vercel.app/dashboard");
         });
     }
@@ -36,6 +38,8 @@ router.route("/logout").get((req, res) => {
 });
 
 router.route("/check").get((req, res) => {
+    console.log(req.user);
+    
     if (!req.isAuthenticated()) {
         return res.status(401).json({ message: "Unauthorized" });
     }
