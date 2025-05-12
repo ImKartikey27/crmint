@@ -1,3 +1,4 @@
+
 // Base API configuration
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"
 
@@ -71,10 +72,19 @@ export const segmentApi = {
   },
 
   // Get all campaigns
-  getCampaigns: () => {
-    return apiRequest("/api/campaign", {
-      method: "GET",
-    })
+  getCampaigns: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/campaign`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      return await response.json()
+    } catch (error) {
+      console.error("Error fetching campaigns:", error)
+      throw error
+    }
   },
 
   // Get a single campaign by ID
@@ -83,4 +93,21 @@ export const segmentApi = {
       method: "GET",
     })
   },
+
+  getInsights: async (id) => {  
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/campaign/insights/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      const data = await response.json()
+      console.log(data)
+      return await data
+    } catch (error) {
+      console.error("Error fetching campaign insights:", error)
+      throw error
+    }
+  }
 }
