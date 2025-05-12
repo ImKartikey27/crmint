@@ -31,7 +31,7 @@ async function getInsights(campaignId){
                 },
                 {
                     role: "user",
-                    content: "Please provide insights based on the above data."
+                    content: "Based on the above data, analyze and provide A high-level summary of campaign performance. Possible reasons for unsuccessful email deliveries. Recommendations to improve future campaign performance. Suggestions for refining audience targeting or content."
                 }
             ],
             temperature: 0.3,
