@@ -46,7 +46,7 @@ async function apiRequest(endpoint, options = {}) {
 export const segmentApi = {
   // Preview audience size based on segment rules
   previewSegment: (data) => {
-    return apiRequest("/api/v1/campaigns/preview", {
+    return apiRequest("/api/campaign/preview-segment", {
       method: "POST",
       body: JSON.stringify({
         rules: data.rules,
@@ -57,7 +57,7 @@ export const segmentApi = {
 
   // Save a new campaign with segment rules
   saveCampaign: (campaign) => {
-    return apiRequest("/api/v1/campaigns", {
+    return apiRequest("/api/campaign/save-campaign", {
       method: "POST",
       body: JSON.stringify({
         name: campaign.name,
@@ -72,14 +72,14 @@ export const segmentApi = {
 
   // Get all campaigns
   getCampaigns: () => {
-    return apiRequest("/api/v1/campaigns", {
+    return apiRequest("/api/campaign", {
       method: "GET",
     })
   },
 
   // Get a single campaign by ID
   getCampaign: (id) => {
-    return apiRequest(`/api/v1/campaigns/${id}`, {
+    return apiRequest(`/api/campaign/${id}`, {
       method: "GET",
     })
   },
