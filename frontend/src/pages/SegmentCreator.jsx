@@ -134,7 +134,7 @@ function SegmentCreator({ onSave }) {
                   <span>Saving...</span>
                 </>
               ) : (
-                "Save Segment"
+                "Save Segment & Send Mails"
               )}
             </button>
           )}

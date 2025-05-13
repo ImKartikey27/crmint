@@ -7,6 +7,11 @@
 
 A modern CRM platform featuring real-time data ingestion, intelligent customer segmentation, and AI-driven campaign insights.
 
+## 🚀 Deployed Link
+
+You can access the live project here:  
+👉 [View Live App](https://crmint-sigma.vercel.app)
+
 
 ## ✨ Key Features
 
@@ -145,6 +150,12 @@ graph TB
 - **React Router** - Navigation
 - **Context API** - State management
 
+### 🚀 Deployment
+
+- 🔧 **Koyeb** – Backend Deployment  
+- 🎨 **Vercel** – Frontend Deployment  
+- ☁️ **Cloud Database** – MongoDB Atlas
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -253,6 +264,19 @@ Time2Manage/
    - Sent to Groq AI for analysis
    - Natural language insights generated
    - Displayed in dashboard
+
+## 🧪 API Testing with Postman
+
+**Postman Collection:** [Download here](./Public/crmint.postman_collection.json)
+
+Import this collection into Postman to test all available API endpoints.
+
+### ✅ Features Included:
+
+- 🔐 **Pre-request scripts** for automatic token generation  
+- 🧪 **Automated tests** for:
+  - Response status code validation  
+  - Response body and data structure validation  
 
 ## 🤝 Contributing
 

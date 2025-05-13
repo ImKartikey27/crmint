@@ -1,0 +1,574 @@
+{
+	"info": {
+		"_postman_id": "a0562b8c-0427-45e9-b586-0aad38cce0ae",
+		"name": "crmint",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38405054"
+	},
+	"item": [
+		{
+			"name": "customer",
+			"item": [
+				{
+					"name": "create-customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 201\", function () {",
+									"    pm.expect(pm.response.code).to.equal(201);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response time is within an acceptable range\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(300);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response schema includes statusCode, data, message, and success fields\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData).to.have.property('statusCode');",
+									"    pm.expect(responseData).to.have.property('data');",
+									"    pm.expect(responseData).to.have.property('message');",
+									"    pm.expect(responseData).to.have.property('success');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Name, email, phone, and address are present in the response message\", function () {",
+									"  const responseData = pm.response.json();",
+									"  ",
+									"  pm.expect(responseData.message).to.be.an('object');",
+									"  pm.expect(responseData.message).to.include.all.keys('name', 'email', 'phone', 'address');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Name, email, and phone are in valid formats\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    ",
+									"    pm.expect(responseData.message.name).to.be.a('string').and.to.match(/[a-zA-Z]+/, \"Name should be a valid string format\");",
+									"    pm.expect(responseData.message.email).to.be.a('string').and.to.match(/\\S+@\\S+\\.\\S+/, \"Email should be a valid email format\");",
+									"    pm.expect(responseData.message.phone).to.be.a('string').and.to.match(/^\\d{10}$/, \"Phone should be a valid 10-digit number format\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Riya\",\n    \"email\": \"kartikey.sangal.11.a.sdpsmzn@gmail.com\",\n    \"phone\": \"8755476333\",\n    \"address\": \"ABES Engineering College\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{crmint}}/api/v1/customer/create-customer",
+							"host": [
+								"{{crmint}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"customer",
+								"create-customer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "create-order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 201\", function () {",
+									"  pm.expect(pm.response.code).to.equal(201);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response time is in an acceptable range\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(300);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response schema is as expected\", function () {",
+									"  const responseData = pm.response.json();",
+									"",
+									"  pm.expect(responseData).to.be.an('object');",
+									"  pm.expect(responseData).to.have.property('statusCode');",
+									"  pm.expect(responseData).to.have.property('data');",
+									"  pm.expect(responseData).to.have.property('message');",
+									"  pm.expect(responseData).to.have.property('success');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Customer ID is not empty and in a valid format\", function () {",
+									"    const responseData = pm.response.json();",
+									"",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message.customerId).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Customer ID should not be empty\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"Quantity and price are non-negative numbers\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message.quantity).to.be.a('number').and.to.be.at.least(0);",
+									"    pm.expect(responseData.message.price).to.be.a('number').and.to.be.at.least(0);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customerId\": \"68204c2520a732052ad361ed\",\n    \"product\": \"milk\",\n    \"quantity\": 5,\n    \"price\": 40,\n    \"status\": \"pending\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{crmint}}/api/v1/order/create-order",
+							"host": [
+								"{{crmint}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"order",
+								"create-order"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Campaign",
+			"item": [
+				{
+					"name": "preview-segment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Content-Type header is application/json\", function () {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"Validate the data schema\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.data).to.be.an('object');",
+									"    pm.expect(responseData.data.audienceSize).to.exist.and.to.be.a('number');",
+									"    ",
+									"    pm.expect(responseData.data.customers).to.be.an('array');",
+									"    responseData.data.customers.forEach(function(customer) {",
+									"        pm.expect(customer._id).to.exist.and.to.be.a('string');",
+									"        pm.expect(customer.name).to.exist.and.to.be.a('string');",
+									"        pm.expect(customer.email).to.exist.and.to.be.a('string');",
+									"        pm.expect(customer.phone).to.exist.and.to.be.a('string');",
+									"        pm.expect(customer.address).to.exist.and.to.be.a('string');",
+									"        pm.expect(customer.createdAt).to.exist.and.to.be.a('string');",
+									"        pm.expect(customer.updatedAt).to.exist.and.to.be.a('string');",
+									"        pm.expect(customer.__v).to.exist.and.to.be.a('number');",
+									"        pm.expect(customer.lastActiveAt).to.exist.and.to.be.a('string');",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Email is in a valid format\", function () {",
+									"    const responseData = pm.response.json();",
+									"",
+									"    responseData.data.customers.forEach(function(customer) {",
+									"        pm.expect(customer.email).to.be.a('string').and.to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);",
+									"    });",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rules\": [\n    {\n      \"field\": \"spend\",\n      \"operator\": \">\",\n      \"value\": 1000\n    },\n    {\n      \"field\": \"visits\",\n      \"operator\": \">\",\n      \"value\": 1\n    }\n  ],\n  \"condition\": \"OR\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{crmint}}/api/campaign/preview-segment",
+							"host": [
+								"{{crmint}}"
+							],
+							"path": [
+								"api",
+								"campaign",
+								"preview-segment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "post-new-campaign",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 201\", function () {",
+									"  pm.response.to.have.status(201);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Message object has the correct structure\", function () {",
+									"    const responseData = pm.response.json();",
+									"",
+									"    pm.expect(responseData.message).to.be.an('object');",
+									"    pm.expect(responseData.message.campaign).to.exist.and.to.be.an('object');",
+									"    pm.expect(responseData.message.rules).to.exist.and.to.be.an('array');",
+									"    pm.expect(responseData.message.audienceSize).to.exist.and.to.be.a('number');",
+									"    pm.expect(responseData.message.stats).to.exist.and.to.be.an('object');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Campaign object contains required fields\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData.campaign).to.exist;",
+									"    pm.expect(responseData.campaign).to.have.property(\"name\");",
+									"    pm.expect(responseData.campaign).to.have.property(\"rules\");",
+									"    pm.expect(responseData.campaign).to.have.property(\"audienceSize\");",
+									"    pm.expect(responseData.campaign).to.have.property(\"stats\");",
+									"    pm.expect(responseData.campaign).to.have.property(\"_id\");",
+									"    pm.expect(responseData.campaign).to.have.property(\"createdAt\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"Validate the structure of 'rules' array and its elements\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.have.property('message');",
+									"    pm.expect(responseData.message).to.have.property('campaign');",
+									"    pm.expect(responseData.message.campaign).to.have.property('rules').that.is.an('array').with.lengthOf.at.least(1);",
+									"",
+									"    responseData.message.campaign.rules.forEach(function(rule) {",
+									"        pm.expect(rule).to.have.property('conditionType').that.is.a('string');",
+									"        pm.expect(rule).to.have.property('conditions').that.is.an('array').with.lengthOf.at.least(1);",
+									"",
+									"        rule.conditions.forEach(function(condition) {",
+									"            pm.expect(condition).to.have.property('field').that.is.a('string');",
+									"            pm.expect(condition).to.have.property('operator').that.is.a('string');",
+									"            pm.expect(condition).to.have.property('value').that.is.a('number');",
+									"            pm.expect(condition).to.have.property('_id').that.is.a('string');",
+									"        });",
+									"    });",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"most spend\",\n  \"rules\": [\n    {\n      \"conditionType\": \"AND\",\n      \"conditions\": [\n        {\n          \"field\": \"spend\",\n          \"operator\": \">\",\n          \"value\": 1000\n        },\n        {\n          \"field\": \"visits\",\n          \"operator\": \">\",\n          \"value\": 1\n        }\n      ]\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/campaign/save-campaign",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"campaign",
+								"save-campaign"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-campaigns",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response body matches the expected schema\", function () {",
+									"  const responseData = pm.response.json();",
+									"  ",
+									"  pm.expect(responseData).to.be.an('object');",
+									"  pm.expect(responseData).to.have.property('campaigns').that.is.an('array');",
+									"  responseData.campaigns.forEach(campaign => {",
+									"    pm.expect(campaign).to.be.an('object');",
+									"    pm.expect(campaign).to.have.property('id').that.is.a('number');",
+									"    pm.expect(campaign).to.have.property('name').that.is.a('string');",
+									"    pm.expect(campaign).to.have.property('startDate').that.is.a('string');",
+									"    pm.expect(campaign).to.have.property('endDate').that.is.a('string');",
+									"  });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Presence of required fields in the response\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData).to.have.property('id');",
+									"    pm.expect(responseData).to.have.property('name');",
+									"    pm.expect(responseData).to.have.property('startDate');",
+									"    pm.expect(responseData).to.have.property('endDate');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Campaigns array is present and contains expected number of elements\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.have.property('campaigns').that.is.an('array').with.lengthOf.at.least(1);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{crmint}}/api/campaign/campaigns",
+							"host": [
+								"{{crmint}}"
+							],
+							"path": [
+								"api",
+								"campaign",
+								"campaigns"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-campaign-by-id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.equal(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response body has the required fields\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.have.property('statusCode');",
+									"    pm.expect(responseData).to.have.property('data');",
+									"    pm.expect(responseData).to.have.property('message');",
+									"    pm.expect(responseData).to.have.property('success');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response time is within acceptable range\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Validate the structure of the campaign object in the response\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData).to.have.property('statusCode');",
+									"    pm.expect(responseData).to.have.property('data').that.is.an('object');",
+									"    pm.expect(responseData.data).to.have.property('message').that.is.an('object');",
+									"    pm.expect(responseData.data.message).to.have.property('campaign').that.is.an('object');",
+									"    pm.expect(responseData.data.message.campaign).to.have.property('stats').that.is.an('object');",
+									"    pm.expect(responseData.data.message.campaign).to.have.property('_id');",
+									"    pm.expect(responseData.data.message.campaign).to.have.property('name');",
+									"    pm.expect(responseData.data.message.campaign).to.have.property('rules').that.is.an('array');",
+									"    pm.expect(responseData.data.message.campaign).to.have.property('audienceSize');",
+									"    pm.expect(responseData.data.message.campaign).to.have.property('createdAt');",
+									"    pm.expect(responseData.data.message.campaign).to.have.property('__v');",
+									"    pm.expect(responseData).to.have.property('success', true);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Stats object contains keys for 'sent' and 'failed' with non-negative integer values\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.message.campaign.stats).to.have.property('sent').that.is.a('number').and.is.at.least(0);",
+									"    pm.expect(responseData.message.campaign.stats).to.have.property('failed').that.is.a('number').and.is.at.least(0);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{crmint}}/api/campaign/campaigns/:id",
+							"host": [
+								"{{crmint}}"
+							],
+							"path": [
+								"api",
+								"campaign",
+								"campaigns",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "68208a2c5ad99bbd7bc757ca"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-campaign-Insights",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Validate the response schema for statusCode, data, message, and success fields\", function () {",
+									"    const responseData = pm.response.json();",
+									"",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.statusCode).to.exist.and.to.be.a('number');",
+									"    pm.expect(responseData.data).to.exist;",
+									"    pm.expect(responseData.message).to.exist.and.to.be.an('object');",
+									"    pm.expect(responseData.success).to.exist.and.to.be.a('boolean');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{crmint}}/api/campaign/insights/68208a2c5ad99bbd7bc757ca",
+							"host": [
+								"{{crmint}}"
+							],
+							"path": [
+								"api",
+								"campaign",
+								"insights",
+								"68208a2c5ad99bbd7bc757ca"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "crmint",
+			"value": "http://localhost:3000",
+			"type": "default"
+		}
+	]
+}
