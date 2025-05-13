@@ -10,8 +10,7 @@ router.route("/google").get(passport.authenticate("google", {
 
 router.route("/google/callback").get(
     passport.authenticate("google", {
-        failureRedirect: "https://crmint-sigma.vercel.app/login",
-        session: true
+        failureRedirect: "https://crmint-sigma.vercel.app/login"
     }),
     (req, res) => {
         // Ensure session is saved before redirect

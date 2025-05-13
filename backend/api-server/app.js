@@ -7,6 +7,7 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 dotenv.config()
+app.set("trust proxy", 1);
 
 
 const app = express()
@@ -17,7 +18,13 @@ app.use(express.urlencoded({extended:true, limit: "16kb"}))
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 
-
+app.use(cors({
+    origin: "https://crmint-sigma.vercel.app",
+    //origin: process.env.CLIENT_URL,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}))
 app.use(session({
   //name: 'connect.sid',
   secret: process.env.SESSION_SECRET || 'your-session-secret',
@@ -34,13 +41,7 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(cookieParser())
-app.use(cors({
-    origin: "https://crmint-sigma.vercel.app",
-    //origin: process.env.CLIENT_URL,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ["Content-Type", "Authorization"]
-}))
+
 // Debug middleware
 app.use((req, res, next) => {
     console.log('Session:', req.session);
