@@ -7,7 +7,7 @@
 
 A modern CRM platform featuring real-time data ingestion, intelligent customer segmentation, and AI-driven campaign insights.
 
-## 🚀 Deployed Link
+## 🚀 Deployed Link - Browser Compatibility currently in Chrome Only
 
 You can access the live project here:  
 👉 [View Live App](https://crmint-sigma.vercel.app)
