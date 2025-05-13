@@ -35,7 +35,7 @@ const startOrderStream = async () => {
                     },
                     {
                         COUNT: 1,
-                        BLOCK: 5000 
+                        BLOCK: 1000 
                     }
                 );
 
