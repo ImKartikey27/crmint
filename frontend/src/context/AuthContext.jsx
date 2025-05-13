@@ -29,16 +29,23 @@ export function AuthProvider({ children }) {
     }
   }
 
-  const logout = async () => {
-    try {
-      await fetch("https://panicky-lora-kartikeysangal-connect-d32e97b6.koyeb.app/api/auth/logout", {
-        credentials: "include"
-      })
+ const logout = async () => {
+  try {
+    const res = await fetch("https://panicky-lora-kartikeysangal-connect-d32e97b6.koyeb.app/api/auth/logout", {
+      credentials: "include"
+    });
+
+    if (res.ok) {
       setUser(null)
-    } catch (error) {
-      console.error("Logout failed:", error)
+      window.location.href = "https://crmint-sigma.vercel.app/login"
+    } else {
+      console.error("Logout failed with status:", res.status);
     }
+  } catch (error) {
+    console.error("Logout failed:", error);
   }
+};
+
 
   return (
     <AuthContext.Provider value={{ user, loading, logout }}>
