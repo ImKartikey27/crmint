@@ -32,6 +32,7 @@ router.route("/logout").get((req, res) => {
             console.error('Logout error:', err);
             return res.status(500).json({ message: "Error logging out" });
         }
+        res.clearCookie("connect.sid", { path: '/' });
         res.redirect("https://crmint-sigma.vercel.app/login");
     });
 });
