@@ -7,10 +7,11 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 dotenv.config()
-app.set("trust proxy", 1);
+
 
 
 const app = express()
+app.set("trust proxy", 1);
 
 //common middlewares
 app.use(express.json({limit: "16kb"}))
