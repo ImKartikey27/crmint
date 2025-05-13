@@ -37,8 +37,8 @@ function ProtectedRoute({ children }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-indigo-50">
+        <LoadingSpinner size="large" />
       </div>
     )
   }
@@ -91,49 +91,53 @@ function DashboardLayout() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-indigo-50">
+        <LoadingSpinner size="large" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-indigo-50">
+      <nav className="bg-white shadow-md backdrop-blur-lg bg-opacity-90 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex">
+            <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-gray-800">Audience Tool</h1>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-indigo-800 bg-clip-text text-transparent">
+                  Audience Tool
+                </h1>
               </div>
-              <div className="ml-6 flex space-x-8">
+              <div className="ml-10 flex space-x-4">
                 <button
                   onClick={() => navigateTo("segment-creator")}
-                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105 ${
                     currentPage === "segment-creator"
-                      ? "border-gray-800 text-gray-900"
-                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                      ? "bg-indigo-100 text-indigo-700 shadow-inner"
+                      : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
                   }`}
                 >
                   Create Segment
                 </button>
                 <button
                   onClick={() => navigateTo("campaign-history")}
-                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105 ${
                     currentPage === "campaign-history"
-                      ? "border-gray-800 text-gray-900"
-                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                      ? "bg-indigo-100 text-indigo-700 shadow-inner"
+                      : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
                   }`}
                 >
                   Campaign History
                 </button>
               </div>
             </div>
-            <div className="flex items-center">
-              <span className="mr-4 text-sm text-gray-700">{user?.email}</span>
+            <div className="flex items-center space-x-4">
+              <span className="px-4 py-2 text-sm text-gray-600 bg-gray-50 rounded-lg">
+                {user?.email}
+              </span>
               <button
                 onClick={logout}
-                className="text-sm text-gray-700 hover:text-gray-900"
+                className="px-4 py-2 text-sm font-medium text-red-600 hover:text-white hover:bg-red-500 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
               >
                 Logout
               </button>
@@ -142,14 +146,20 @@ function DashboardLayout() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {error && <ErrorMessage error={error} onRetry={handleRetry} />}
-
-        {currentPage === "segment-creator" ? (
-          <SegmentCreator onSave={addCampaign} />
-        ) : (
-          <CampaignHistory campaigns={campaigns} />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {error && (
+          <div className="mb-6">
+            <ErrorMessage error={error} onRetry={handleRetry} />
+          </div>
         )}
+
+        <div className="transition-all duration-300 ease-in-out">
+          {currentPage === "segment-creator" ? (
+            <SegmentCreator onSave={addCampaign} />
+          ) : (
+            <CampaignHistory campaigns={campaigns} />
+          )}
+        </div>
       </main>
     </div>
   )
