@@ -20,7 +20,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
 
 app.use(cors({
-    origin: "crmint.tech",
+    origin: "https://crmint-sigma.vercel.app",
     //origin: process.env.CLIENT_URL,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
